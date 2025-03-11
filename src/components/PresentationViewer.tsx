@@ -5,17 +5,22 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface Slide {
-  id: number;
+  id?: number;  // Make id optional to support both formats
   title: string;
-  content: string;
+  content?: string;
   imageUrl?: string;
+  type?: string;
+  chartData?: {
+    labels: string[];
+    values: number[];
+  };
 }
 
 interface PresentationViewerProps {
   isOpen: boolean;
   onClose: () => void;
   slides: Slide[];
-  title: string;
+  title?: string;
 }
 
 const PresentationViewer = ({ isOpen, onClose, slides, title }: PresentationViewerProps) => {
@@ -118,7 +123,7 @@ const PresentationViewer = ({ isOpen, onClose, slides, title }: PresentationView
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <div className="text-xl font-semibold text-finance-blue truncate">
-            {title} - Presentation
+            {title || "Presentation"} - Presentation
           </div>
           <div className="flex items-center space-x-2">
             <Button 
@@ -160,7 +165,22 @@ const PresentationViewer = ({ isOpen, onClose, slides, title }: PresentationView
                 {slides[currentSlide].title}
               </h2>
               <div className="text-gray-700 flex-1 overflow-y-auto">
-                {slides[currentSlide].content}
+                {slides[currentSlide].content || ""}
+                
+                {/* Render chart data if available */}
+                {slides[currentSlide].chartData && (
+                  <div className="mt-4 bg-gray-50 p-4 rounded-lg">
+                    <p className="text-sm text-gray-500 italic">Chart visualization would appear here</p>
+                    <div className="mt-2">
+                      {slides[currentSlide].chartData.labels.map((label, idx) => (
+                        <div key={idx} className="flex justify-between text-sm mb-1">
+                          <span>{label}:</span>
+                          <span>{slides[currentSlide].chartData?.values[idx]}%</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
