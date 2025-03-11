@@ -1,85 +1,11 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { CalendarDays, ChevronDown, Download, FileText, Search } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Header from '@/components/Header';
-
-// Sample report data
-const sampleReports = [
-  {
-    id: 1,
-    title: 'Apple Inc. (AAPL) Valuation Analysis',
-    publishDate: '2023-06-15',
-    researchType: 'Equity Research',
-    summary: 'A comprehensive valuation analysis of Apple Inc., examining growth drivers, risks, and fair value estimation.'
-  },
-  {
-    id: 2,
-    title: 'Renewable Energy Sector Outlook 2023',
-    publishDate: '2023-05-22',
-    researchType: 'Sector Analysis',
-    summary: 'An in-depth analysis of the renewable energy sector, highlighting key trends, challenges, and investment opportunities.'
-  },
-  {
-    id: 3,
-    title: 'Microsoft Corporation (MSFT) Financial Analysis',
-    publishDate: '2023-04-10',
-    researchType: 'Equity Research',
-    summary: 'Detailed financial analysis of Microsoft, focusing on cloud computing growth and strategic initiatives.'
-  },
-  {
-    id: 4,
-    title: 'Banking Sector: Interest Rate Impact Assessment',
-    publishDate: '2023-03-28',
-    researchType: 'Sector Analysis',
-    summary: 'Analysis of how rising interest rates will impact the banking sector profitability and growth prospects.'
-  },
-  {
-    id: 5,
-    title: 'Tesla Inc. (TSLA) DCF Valuation',
-    publishDate: '2023-02-15',
-    researchType: 'Valuation Report',
-    summary: 'A discounted cash flow valuation of Tesla, examining its growth potential in the electric vehicle market.'
-  },
-  {
-    id: 6,
-    title: 'Semiconductor Industry Supply Chain Analysis',
-    publishDate: '2023-01-10',
-    researchType: 'Sector Analysis',
-    summary: 'Examination of global semiconductor supply chains, key players, and future outlook.'
-  },
-  {
-    id: 7,
-    title: 'Amazon.com Inc. (AMZN) Equity Research',
-    publishDate: '2022-12-05',
-    researchType: 'Equity Research',
-    summary: 'In-depth analysis of Amazon\'s business segments, competitive advantages, and valuation.'
-  },
-  {
-    id: 8,
-    title: 'Cryptocurrency Market Analysis 2023',
-    publishDate: '2022-11-20',
-    researchType: 'Market Analysis',
-    summary: 'Comprehensive analysis of cryptocurrency markets, regulatory landscape, and investment considerations.'
-  },
-  {
-    id: 9,
-    title: 'Healthcare Sector: Innovation and Investment Opportunities',
-    publishDate: '2022-10-15',
-    researchType: 'Sector Analysis',
-    summary: 'Analysis of emerging technologies and investment opportunities in the healthcare sector.'
-  },
-  {
-    id: 10,
-    title: 'Netflix Inc. (NFLX) Competitive Analysis',
-    publishDate: '2022-09-10',
-    researchType: 'Equity Research',
-    summary: 'Detailed examination of Netflix\'s business model, content strategy, and competitive landscape.'
-  }
-];
+import { listReports, ReportFrontmatter } from '@/utils/markdown';
 
 // Research type badge color mapping
 const getBadgeVariant = (type: string) => {
@@ -100,9 +26,27 @@ const getBadgeVariant = (type: string) => {
 const Reports = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('All');
+  const [reports, setReports] = useState<ReportFrontmatter[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Load reports from markdown
+  useEffect(() => {
+    async function loadReports() {
+      try {
+        const reportsList = await listReports();
+        setReports(reportsList as ReportFrontmatter[]);
+      } catch (error) {
+        console.error("Error loading reports:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    loadReports();
+  }, []);
   
   // Filter reports based on search query and filter type
-  const filteredReports = sampleReports.filter(report => {
+  const filteredReports = reports.filter(report => {
     const matchesSearch = report.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           report.summary.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === 'All' || report.researchType === filterType;
@@ -111,7 +55,7 @@ const Reports = () => {
   });
   
   // Get unique research types for filter
-  const researchTypes = ['All', ...Array.from(new Set(sampleReports.map(report => report.researchType)))];
+  const researchTypes = ['All', ...Array.from(new Set(reports.map(report => report.researchType)))];
 
   return (
     <div className="min-h-screen bg-finance-gray animate-fade-in">
@@ -159,7 +103,14 @@ const Reports = () => {
           
           {/* Reports list */}
           <div className="space-y-4">
-            {filteredReports.length > 0 ? (
+            {loading ? (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                  <FileText className="h-8 w-8 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">Loading reports...</h3>
+              </div>
+            ) : filteredReports.length > 0 ? (
               filteredReports.map(report => (
                 <div 
                   key={report.id}

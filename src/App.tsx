@@ -10,6 +10,7 @@ import Reports from "./pages/Reports";
 import ReportPage from "./pages/ReportPage";
 import Models from "./pages/Models";
 import ModelPage from "./pages/ModelPage";
+import MarkdownGuide from "./pages/MarkdownGuide";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/reports/:id" element={<ReportPage />} />
           <Route path="/models" element={<Models />} />
           <Route path="/models/:id" element={<ModelPage />} />
+          <Route path="/markdown-guide" element={<MarkdownGuide />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

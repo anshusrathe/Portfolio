@@ -1,9 +1,9 @@
-
 import React from 'react';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import ReportsTable from '@/components/ReportsTable';
 import ModelCards from '@/components/ModelCards';
+import ContentWorkflowStatus from '@/components/ContentWorkflowStatus';
 
 const Index = () => {
   return (
@@ -11,6 +11,12 @@ const Index = () => {
       <Header />
       <main>
         <Hero />
+        <div className="container mx-auto px-4 md:px-6 py-8">
+          <div className="max-w-5xl mx-auto mb-12">
+            <h2 className="text-2xl font-bold text-finance-blue mb-6">Content Management</h2>
+            <ContentWorkflowStatus />
+          </div>
+        </div>
         <ReportsTable />
         <ModelCards />
       </main>
