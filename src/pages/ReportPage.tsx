@@ -136,7 +136,8 @@ const ReportPage = () => {
       {showPresentation && (
         <PresentationViewer 
           slides={report.slides} 
-          onClose={() => setShowPresentation(false)} 
+          onClose={() => setShowPresentation(false)}
+          isOpen={showPresentation} 
         />
       )}
       
