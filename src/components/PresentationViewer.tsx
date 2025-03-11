@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, X, Maximize2, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface Slide {
-  id?: number;  // Make id optional to support both formats
+  id?: number;
   title: string;
   content?: string;
   imageUrl?: string;
@@ -28,7 +27,6 @@ const PresentationViewer = ({ isOpen, onClose, slides, title }: PresentationView
   const [fullscreen, setFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
@@ -46,7 +44,6 @@ const PresentationViewer = ({ isOpen, onClose, slides, title }: PresentationView
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, currentSlide, slides.length, onClose]);
 
-  // Block scroll when modal is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -59,7 +56,6 @@ const PresentationViewer = ({ isOpen, onClose, slides, title }: PresentationView
     };
   }, [isOpen]);
 
-  // Toggle fullscreen
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       containerRef.current?.requestFullscreen().catch(err => {
@@ -72,7 +68,6 @@ const PresentationViewer = ({ isOpen, onClose, slides, title }: PresentationView
     }
   };
 
-  // Exit fullscreen when closing
   useEffect(() => {
     if (!isOpen && document.fullscreenElement) {
       document.exitFullscreen();
@@ -80,7 +75,6 @@ const PresentationViewer = ({ isOpen, onClose, slides, title }: PresentationView
     }
   }, [isOpen]);
 
-  // Navigation functions
   const goToNextSlide = () => {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
@@ -97,7 +91,6 @@ const PresentationViewer = ({ isOpen, onClose, slides, title }: PresentationView
     setCurrentSlide(index);
   };
 
-  // Handle click outside the presentation content
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       onClose();
@@ -120,7 +113,6 @@ const PresentationViewer = ({ isOpen, onClose, slides, title }: PresentationView
         )}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <div className="text-xl font-semibold text-finance-blue truncate">
             {title || "Presentation"} - Presentation
@@ -145,7 +137,6 @@ const PresentationViewer = ({ isOpen, onClose, slides, title }: PresentationView
           </div>
         </div>
         
-        {/* Slide content */}
         <div className="flex-1 overflow-hidden relative">
           <div className="absolute inset-0 flex items-center justify-center p-4 md:p-8">
             <div 
@@ -164,10 +155,9 @@ const PresentationViewer = ({ isOpen, onClose, slides, title }: PresentationView
               <h2 className="text-xl md:text-2xl font-bold text-finance-blue mb-3">
                 {slides[currentSlide].title}
               </h2>
-              <div className="text-gray-700 flex-1 overflow-y-auto">
+              <div className="text-gray-700 flex-1 overflow-y-auto whitespace-pre-line">
                 {slides[currentSlide].content || ""}
                 
-                {/* Render chart data if available */}
                 {slides[currentSlide].chartData && (
                   <div className="mt-4 bg-gray-50 p-4 rounded-lg">
                     <p className="text-sm text-gray-500 italic">Chart visualization would appear here</p>
@@ -185,7 +175,6 @@ const PresentationViewer = ({ isOpen, onClose, slides, title }: PresentationView
             </div>
           </div>
           
-          {/* Navigation arrows */}
           <Button
             variant="ghost"
             size="icon"
@@ -215,7 +204,6 @@ const PresentationViewer = ({ isOpen, onClose, slides, title }: PresentationView
           </Button>
         </div>
         
-        {/* Slide thumbnails/indicators */}
         <div className="p-4 border-t bg-gray-50">
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-500">

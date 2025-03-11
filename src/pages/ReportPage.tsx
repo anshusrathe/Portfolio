@@ -4,6 +4,7 @@ import { ArrowLeft, CalendarDays, Download, PresentationIcon, Share2, User } fro
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
+import BackToHome from '@/components/BackToHome';
 import PresentationViewer from '@/components/PresentationViewer';
 import ReportDetail from '@/components/ReportDetail';
 import { getReportById } from '@/utils/markdown';
@@ -93,7 +94,8 @@ const ReportPage = () => {
       <main className="container mx-auto px-4 md:px-6 py-12 mt-16">
         <div className="max-w-3xl mx-auto">
           {/* Back navigation */}
-          <div className="mb-6">
+          <div className="flex space-x-4 mb-6">
+            <BackToHome />
             <Link 
               to="/reports" 
               className="inline-flex items-center text-finance-blue hover:text-finance-accent transition-colors"

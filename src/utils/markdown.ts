@@ -29,6 +29,21 @@ export async function fetchMarkdownFile(path: string) {
   throw new Error(`File not found: ${path}`);
 }
 
+// Mock function to fetch slides data
+export async function fetchSlidesData(reportId: string) {
+  const slidesPath = `assets/reports/${reportId}/slides.json`;
+  
+  // In a real app, this would fetch a JSON file
+  // For demo purposes, we'll use mock data
+  const mockSlides = MOCK_SLIDES;
+  
+  if (mockSlides[reportId]) {
+    return mockSlides[reportId];
+  }
+  
+  throw new Error(`Slides not found for report: ${reportId}`);
+}
+
 // Types for our content
 export interface ReportFrontmatter {
   layout: string;
@@ -38,6 +53,7 @@ export interface ReportFrontmatter {
   author: string;
   researchType: string;
   summary: string;
+  slidesSource?: string;
   slides?: any[];
 }
 
@@ -52,6 +68,39 @@ export interface ModelFrontmatter {
   screenshots?: string[];
 }
 
+// Mock slides data for demo purposes
+const MOCK_SLIDES: Record<string, any[]> = {
+  "1": [
+    {
+      title: "Apple Inc. (AAPL) Valuation Analysis",
+      content: "Comprehensive equity research and valuation report",
+      type: "title",
+      imageUrl: "/placeholder.svg"
+    },
+    {
+      title: "Executive Summary",
+      content: "• Market leader in premium smartphones, wearables, and tablets\n• Expanding services ecosystem with high margins\n• Strong cash flow generation and shareholder returns\n• Initiating coverage with BUY rating and $190 price target",
+      type: "content",
+      imageUrl: "/placeholder.svg"
+    },
+    {
+      title: "Financial Highlights",
+      content: "• FY2022 Revenue: $394.3 billion (+7.8% YoY)\n• Gross Margin: 43.3% (+160 bps YoY)\n• Services Revenue: $78.1 billion (+19% YoY)\n• Cash & Equivalents: $48.3 billion\n• TTM Free Cash Flow: $111.4 billion",
+      type: "content",
+      imageUrl: "/placeholder.svg"
+    },
+    {
+      title: "Revenue Breakdown",
+      type: "chart",
+      chartData: {
+        labels: ["iPhone", "Services", "Mac", "Wearables & Home", "iPad"],
+        values: [52.1, 19.8, 10.2, 10.4, 7.4]
+      },
+      imageUrl: "/placeholder.svg"
+    }
+  ]
+};
+
 // Mock filesystem for demo purposes
 // In a real app, these would be actual files on disk or fetched from a CMS
 const MOCK_FILES: Record<string, string> = {
@@ -63,21 +112,7 @@ publishDate: "2023-06-15"
 author: "John Smith"
 researchType: "Equity Research"
 summary: "A comprehensive valuation analysis of Apple Inc., examining growth drivers, risks, and fair value estimation."
-slides:
-  - title: "Apple Inc. (AAPL) Valuation Analysis"
-    content: "Comprehensive equity research and valuation report"
-    type: "title"
-  - title: "Executive Summary"
-    content: "• Market leader in premium smartphones, wearables, and tablets\\n• Expanding services ecosystem with high margins\\n• Strong cash flow generation and shareholder returns\\n• Initiating coverage with BUY rating and $190 price target"
-    type: "content"
-  - title: "Financial Highlights"
-    content: "• FY2022 Revenue: $394.3 billion (+7.8% YoY)\\n• Gross Margin: 43.3% (+160 bps YoY)\\n• Services Revenue: $78.1 billion (+19% YoY)\\n• Cash & Equivalents: $48.3 billion\\n• TTM Free Cash Flow: $111.4 billion"
-    type: "content"
-  - title: "Revenue Breakdown"
-    type: "chart"
-    chartData:
-      labels: ["iPhone", "Services", "Mac", "Wearables & Home", "iPad"]
-      values: [52.1, 19.8, 10.2, 10.4, 7.4]
+slidesSource: "assets/reports/1/slides.json"
 ---
 
 ## Executive Summary
@@ -216,10 +251,31 @@ export async function getReportById(id: string) {
   const fileContent = await fetchMarkdownFile(reportPath);
   const { content } = parseMarkdown(fileContent);
   
-  return {
-    ...reportMeta,
-    content
-  };
+  // Check if we have slides from a slidesSource property
+  if (reportMeta.slidesSource) {
+    try {
+      // In a real app, fetch the JSON file from reportMeta.slidesSource
+      // For demo purposes, we'll use our mock slides data
+      const slides = await fetchSlidesData(reportMeta.id);
+      return {
+        ...reportMeta,
+        content,
+        slides
+      };
+    } catch (error) {
+      console.error(`Error loading slides for report ${id}:`, error);
+      return {
+        ...reportMeta,
+        content
+      };
+    }
+  } else {
+    // Use slides directly from frontmatter if available
+    return {
+      ...reportMeta,
+      content
+    };
+  }
 }
 
 // Function to get a specific model by ID

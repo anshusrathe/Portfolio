@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Header from '@/components/Header';
+import BackToHome from '@/components/BackToHome';
 import { listReports, ReportFrontmatter } from '@/utils/markdown';
 
 // Research type badge color mapping
@@ -63,6 +64,8 @@ const Reports = () => {
       
       <main className="container mx-auto px-4 md:px-6 py-12 mt-16">
         <div className="max-w-5xl mx-auto">
+          <BackToHome />
+          
           <h1 className="text-3xl md:text-4xl font-bold text-finance-blue mb-2">
             Research Reports
           </h1>
